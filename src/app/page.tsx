@@ -38,7 +38,7 @@ import {
 type Page = 'dashboard' | 'maps' | 'analytics' | 'collaboration' | 'reports' | 'settings';
 
 export default function Dashboard() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>('maps'); // Start with maps since it's fully featured
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export default function Dashboard() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mouseCoordinates, setMouseCoordinates] = useState<[number, number]>([104.9182, 11.5564]);
   const [mapCenter, setMapCenter] = useState<[number, number]>([104.9182, 11.5564]);
-  const [selectedLayer, setSelectedLayer] = useState('dark-matter');
+  const [selectedLayer, setSelectedLayer] = useState('positron');
   const [timelineValue, setTimelineValue] = useState(75);
   const [showContextPanel, setShowContextPanel] = useState(false);
   const [contextPanelData, setContextPanelData] = useState<any>(null);
@@ -704,8 +704,8 @@ export default function Dashboard() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading MIS Geospatial Platform...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-900 text-xl">Loading MIS Geospatial Platform...</div>
       </div>
     );
   }
