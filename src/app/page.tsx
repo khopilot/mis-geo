@@ -93,9 +93,36 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (currentPage === 'maps' && !map.current && mapContainer.current) {
-      initializeMap();
+      // Add a small delay to ensure the container has proper dimensions
+      const timer = setTimeout(() => {
+        initializeMap();
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
-  }, [currentPage, selectedLayer]);
+    
+    // Cleanup function to properly remove the map when switching pages
+    return () => {
+      if (map.current && currentPage !== 'maps') {
+        map.current.remove();
+        map.current = null;
+        setMapLoaded(false);
+      }
+    };
+  }, [currentPage]);
+
+  // Handle layer changes separately without reinitializing the map
+  useEffect(() => {
+    if (map.current && mapLoaded && currentPage === 'maps') {
+      const newStyle = getMapStyle(selectedLayer);
+      map.current.setStyle(newStyle);
+      
+      // Re-add sample data after style change
+      map.current.once('style.load', () => {
+        addSampleData();
+      });
+    }
+  }, [selectedLayer, mapLoaded, currentPage]);
 
   const initializeMap = () => {
     if (map.current || !mapContainer.current) return;
@@ -135,6 +162,9 @@ export default function Dashboard() {
       if (map.current) {
         addSampleData();
       }
+      
+      // Force a resize to ensure proper rendering
+      map.current.resize();
     });
   };
 
@@ -299,6 +329,16 @@ export default function Dashboard() {
         return (
           <div className="relative w-full h-full">
             <div ref={mapContainer} className="w-full h-full" />
+            
+            {/* Loading indicator */}
+            {!mapLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
+                </div>
+              </div>
+            )}
             
             {/* Map Controls - Top Left */}
             <div className="absolute top-4 left-4 z-10 space-y-3">
