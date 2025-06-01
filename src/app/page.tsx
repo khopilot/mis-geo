@@ -165,7 +165,7 @@ export default function Dashboard() {
       }
       
       // Force a resize to ensure proper rendering
-      map.current.resize();
+      map.current?.resize();
     });
   };
 
