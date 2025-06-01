@@ -40,7 +40,7 @@ type Page = 'dashboard' | 'maps' | 'analytics' | 'collaboration' | 'reports' | '
 export default function Dashboard() {
   const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [currentPage, setCurrentPage] = useState<Page>('maps'); // Start with maps since it's fully featured
+  const [currentPage, setCurrentPage] = useState<Page>('dashboard'); // Start with dashboard as the welcome page
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
