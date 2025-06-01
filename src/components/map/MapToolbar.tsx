@@ -225,25 +225,37 @@ export default function MapToolbar({
           id: 'export-image',
           icon: <PhotoIcon className="w-4 h-4" />,
           label: 'Image',
-          action: () => console.log('Export as image'),
+          action: () => {
+            console.log('Export as image');
+            closeToolGroup();
+          },
         },
         {
           id: 'export-geojson',
           icon: <div className="w-4 h-4 flex items-center justify-center text-xs font-bold">GJ</div>,
           label: 'GeoJSON',
-          action: () => console.log('Export as GeoJSON'),
+          action: () => {
+            console.log('Export as GeoJSON');
+            closeToolGroup();
+          },
         },
         {
           id: 'export-kml',
           icon: <div className="w-4 h-4 flex items-center justify-center text-xs font-bold">KML</div>,
           label: 'KML',
-          action: () => console.log('Export as KML'),
+          action: () => {
+            console.log('Export as KML');
+            closeToolGroup();
+          },
         },
         {
           id: 'export-csv',
           icon: <div className="w-4 h-4 flex items-center justify-center text-xs font-bold">CSV</div>,
           label: 'CSV',
-          action: () => console.log('Export as CSV'),
+          action: () => {
+            console.log('Export as CSV');
+            closeToolGroup();
+          },
         },
       ],
     },
@@ -289,11 +301,12 @@ export default function MapToolbar({
               <AnimatePresence>
                 {activeToolGroup === tool.group && tool.subTools && (
                   <motion.div
-                    className="absolute left-full ml-2 top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 min-w-40 z-10"
+                    className="absolute left-full ml-2 top-0 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-2 min-w-[160px] z-50"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.2 }}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     <div className="flex justify-between items-center mb-2 pb-1 border-b border-gray-200 dark:border-gray-700">
                       <span className="text-sm font-medium">{tool.label}</span>

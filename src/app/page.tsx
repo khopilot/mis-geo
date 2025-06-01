@@ -50,6 +50,7 @@ export default function Dashboard() {
   const [timelineValue, setTimelineValue] = useState(75);
   const [showContextPanel, setShowContextPanel] = useState(false);
   const [contextPanelData, setContextPanelData] = useState<any>(null);
+  const [toastMessage, setToastMessage] = useState<{message: string; type: 'info' | 'success' | 'error'} | null>(null);
   
   // Define available map layers
   const mapLayers = [
@@ -243,6 +244,12 @@ export default function Dashboard() {
     setShowContextPanel(false); // Close context panel when switching pages
   };
 
+  // Show toast notification
+  const showToast = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
+    setToastMessage({ message, type });
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   // Page content components
   const renderPageContent = () => {
     switch (currentPage) {
@@ -341,23 +348,39 @@ export default function Dashboard() {
             )}
             
             {/* Map Controls - Top Left */}
-            <div className="absolute top-4 left-4 z-10 space-y-3">
+            <div className="absolute top-4 left-4 z-20 space-y-3">
               <LayerControl 
                 layers={mapLayers} 
                 selectedLayer={selectedLayer} 
                 onSelectLayer={handleLayerChange} 
               />
               <MapToolbar 
-                onSearch={() => console.log('Search initiated')}
-                onRefresh={() => console.log('Refresh initiated')}
-                onZoomToFit={() => map.current?.fitBounds([
-                  [102, 8], [108, 14] // Bounds for Cambodia/region
-                ])}
+                onSearch={() => {
+                  showToast('Search feature coming soon!', 'info');
+                }}
+                onRefresh={() => {
+                  showToast('Refreshing map data...', 'info');
+                  // Simulate refresh
+                  setTimeout(() => showToast('Map data refreshed', 'success'), 1000);
+                }}
+                onZoomToFit={() => {
+                  map.current?.fitBounds([
+                    [102, 8], [108, 14] // Bounds for Cambodia/region
+                  ]);
+                  showToast('Zoomed to fit region', 'success');
+                }}
                 onResetView={() => {
                   map.current?.flyTo({ center: [104.9182, 11.5564], zoom: 5 });
+                  showToast('View reset to default', 'success');
                 }}
-                onDrawComplete={(type, data) => console.log('Draw complete:', type, data)}
-                onMeasureComplete={(type, value, unit) => console.log('Measure complete:', type, value, unit)}
+                onDrawComplete={(type, data) => {
+                  showToast(`${type} drawn successfully`, 'success');
+                  console.log('Draw complete:', type, data);
+                }}
+                onMeasureComplete={(type, value, unit) => {
+                  showToast(`${type}: ${value.toFixed(2)} ${unit}`, 'info');
+                  console.log('Measure complete:', type, value, unit);
+                }}
               />
             </div>
             
@@ -751,6 +774,42 @@ export default function Dashboard() {
           {renderPageContent()}
         </div>
         
+        {/* Toast Notification */}
+        <AnimatePresence>
+          {toastMessage && (
+            <motion.div
+              className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg z-50 ${
+                toastMessage.type === 'success' ? 'bg-green-500 text-white' :
+                toastMessage.type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+              }`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center space-x-2">
+                {toastMessage.type === 'success' && (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+                {toastMessage.type === 'error' && (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+                {toastMessage.type === 'info' && (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                <span>{toastMessage.message}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Context Panel */}
         <AnimatePresence>
           {showContextPanel && contextPanelData && (
